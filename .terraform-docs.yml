@@ -1,0 +1,21 @@
+formatter: markdown document
+header-from: header.txt
+
+sections:
+  hide-all: false
+  show-all: true
+
+output-values:
+  enabled: false
+
+sort:
+  enabled: true
+  by:
+    - required
+
+settings:
+  color: true
+  escape: true
+  indent: 2
+  required: true
+  sensitive: true

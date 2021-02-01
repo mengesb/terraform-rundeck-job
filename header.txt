@@ -1,0 +1,49 @@
+<!-- markdownlint-disable-file MD033 MD012 -->
+# terraform-rundeck-job
+
+Terraform rundeck job module.
+
+A Rundeck job is quite complex, and as such its representation in Terraform can
+also be a bit daunting. Beginning with Terraform 0.15.x, we'll have support for
+defaulting values in structured objects, and while experimental in 0.14.x, it
+was thought best to not use experimental features for the time being.
+
+With this in mind, the structure of the job's nested blocks is in a keyed-index
+model.
+
+The following relationships apply:
+
+- A `rundeck_job` can have several command blocks: `{ n | n ∈ ℕ}`
+- A `command {}` block __may__ have a `job {}` block: 0 or 1
+- A `command {}` block __may__ have a `node_step_plugin {}` block: 0 or 1
+- A `command {}` block __may__ have a `step_plugin {}` block: 0 or 1
+- Several `notification {}` blocks __may__ exist: `{ n | n ∈ ℝ }`
+- A `notification {}` block __may__ have several `email {}` blocks: `{ n | n ∈ ℝ }`
+- A `notification {}` block __may__ have several `plugin {}` blocks: `{ n | n ∈ ℝ }`
+
+How this is accomplished in Terraform is via named indexes. Each `command {}`
+block is identified by it's index and must be unique. You can re-use existing
+indexes for nested items, however not for parent items like `command {}` and
+`notification {}`. There are different variables defining the sub-objects and
+their relationship to the parent via their name:
+
+Command block relationships:
+
+- `var.command`
+- `var.command_job`
+- `var.command_job_notification`
+- `var.command_node_step_plugin`
+- `var.command_step_plugin`
+
+Notification block relationships:
+
+- `var.notification`
+- `var.notification_email`
+- `var.notification_plugin`
+
+Indexes of sub-objects must link up to its parent object to populate the
+correct `rundeck_job` `command` or `notification` block element.
+
+Example:
+
+- Please see [examples/example1/main.tf](examples/example1/main.tf)
