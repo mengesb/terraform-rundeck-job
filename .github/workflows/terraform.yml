@@ -3,7 +3,7 @@ name: Verify and Bump
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        users: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -30,13 +30,8 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+        env:
+          RUNDECK_API: 26
+          RUNDECK_AUTH_TOKEN: abcdefghijklmnopqrstuvwxyz01234Z
+          RUNDECK_URL: "https://localhost"
 
-      - name: Update Pull Request
-        uses: actions/github-script@0.9.0
-        if: github.event_name == 'pull_request'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validate ⚙️\`${{ steps.validate.outcome }}\`
