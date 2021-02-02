@@ -9,7 +9,6 @@ on:
 jobs:
   validate:
     name: Validate terraform configuration
-    env:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
