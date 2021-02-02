@@ -9,6 +9,7 @@ on:
 jobs:
   validate:
     name: Validate terraform configuration
+    env:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,6 +31,10 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+        env:
+          RUNDECK_API: 26
+          RUNDECK_AUTH_TOKEN: abcdefghijklmnopqrstuvwxyz01234Z
+          RUNDECK_URL: "https://localhost"
 
       - name: Update Pull Request
         uses: actions/github-script@0.9.0
