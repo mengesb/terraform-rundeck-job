@@ -4,36 +4,36 @@
 #
 
 locals {
-  commands = flatten([ for k, v in var.command : {
+  commands = flatten([for k, v in var.command : {
     description   = v.description
     shell_command = v.shell_command
     inline_script = v.inline_script
     script_file   = v.inline_script
-    job = flatten([ for l, w in var.command_job : {
+    job = flatten([for l, w in var.command_job : {
       name              = w.name
       group_name        = w.group_name
       run_for_each_node = w.run_for_each_node
       args              = w.args
       nodefilters       = lookup(var.command_job_nodefilters, l, null)
     } if l == k])
-    node_step_plugin = flatten([ for m, x in var.command_node_step_plugin : {
+    node_step_plugin = flatten([for m, x in var.command_node_step_plugin : {
       type   = x.type
       config = x.config
     } if m == k])
-    step_plugin = flatten([ for n, y in var.command_step_plugin : {
+    step_plugin = flatten([for n, y in var.command_step_plugin : {
       type   = y.type
       config = y.config
     } if n == k])
   }])
-  notifications = flatten([ for k, v in var.notification : {
+  notifications = flatten([for k, v in var.notification : {
     type         = v.type
     webhook_urls = v.webhook_urls
-    email = flatten([ for l, w in var.notification_email : {
+    email = flatten([for l, w in var.notification_email : {
       attach_log = w.attach_log
       recipients = w.recipients
       subject    = w.subject
     } if l == k])
-    plugin = flatten([ for m, x in var.notification_plugin : {
+    plugin = flatten([for m, x in var.notification_plugin : {
       type   = x.type
       config = x.config
     } if m == k])
@@ -106,7 +106,7 @@ resource "rundeck_job" "job" {
 
       dynamic "node_step_plugin" {
         for_each = command.value.node_step_plugin
-        
+
         content {
           type   = node_step_plugin.value.type
           config = node_step_plugin.value.config
