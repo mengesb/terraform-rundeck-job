@@ -3,50 +3,7 @@
 
 Terraform rundeck job module.
 
-A Rundeck job is quite complex, and as such its representation in Terraform can  
-also be a bit daunting. Beginning with Terraform 0.15.x, we'll have support for  
-defaulting values in structured objects, and while experimental in 0.14.x, it  
-was thought best to not use experimental features for the time being.
-
-With this in mind, the structure of the job's nested blocks is in a keyed-index  
-model.
-
-The following relationships apply:
-
-- A `rundeck_job` can have several command blocks: `{ n | n ∈ ℕ}`
-- A `command {}` block __may__ have a `job {}` block: 0 or 1
-- A `command {}` block __may__ have a `node_step_plugin {}` block: 0 or 1
-- A `command {}` block __may__ have a `step_plugin {}` block: 0 or 1
-- Several `notification {}` blocks __may__ exist: `{ n | n ∈ ℝ }`
-- A `notification {}` block __may__ have several `email {}` blocks: `{ n | n ∈ ℝ }`
-- A `notification {}` block __may__ have several `plugin {}` blocks: `{ n | n ∈ ℝ }`
-
-How this is accomplished in Terraform is via named indexes. Each `command {}`  
-block is identified by it's index and must be unique. You can re-use existing  
-indexes for nested items, however not for parent items like `command {}` and
-`notification {}`. There are different variables defining the sub-objects and  
-their relationship to the parent via their name:
-
-Command block relationships:
-
-- `var.command`
-- `var.command_job`
-- `var.command_job_notification`
-- `var.command_node_step_plugin`
-- `var.command_step_plugin`
-
-Notification block relationships:
-
-- `var.notification`
-- `var.notification_email`
-- `var.notification_plugin`
-
-Indexes of sub-objects must link up to its parent object to populate the  
-correct `rundeck_job` `command` or `notification` block element.
-
-Example:
-
-- Please see [examples/example1/main.tf](examples/example1/main.tf)
+NOTE: Terraform experimental feature enabled: [module\_variable\_optional\_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
 
 ## Requirements
 
@@ -66,19 +23,36 @@ The following providers are used by this module:
 
 The following input variables are required:
 
-### command
+### commands
 
 Description: Nested block defining one step in the job workflow. A job must have one or more commands.
 
 Type:
 
 ```hcl
-map(object({
-    description      = string
-    shell_command    = string
-    inline_script    = string
-    script_file      = string
-    script_file_args = string
+list(object({
+    description      = optional(string)
+    shell_command    = optional(string)
+    inline_script    = optional(string)
+    script_file      = optional(string)
+    script_file_args = optional(string)
+
+    # job blocks (optional)
+    jobs = optional(list(object({
+      name              = string
+      group_name        = optional(string)
+      run_for_each_node = optional(bool)
+      args              = optional(string)
+      nodefilters       = optional(map(any))
+    })))
+
+    # node_step_plugin and step_plugin blocks (optional)
+    # plugin = (node_step_plugin || step_plugin)
+    steps = optional(list(object({
+      plugin = string
+      type   = string
+      config = optional(map(any))
+    })))
   }))
 ```
 
@@ -112,53 +86,6 @@ Type: `bool`
 
 Default: `false`
 
-### command\_job
-
-Description: A job block for a command.
-
-Type:
-
-```hcl
-map(object({
-    name              = string
-    group_name        = string
-    run_for_each_node = bool
-    args              = string
-  }))
-```
-
-Default: `{}`
-
-### command\_job\_nodefilters
-
-Description: A nodefilters block for a specific job block
-
-Type:
-
-```hcl
-map(object({
-    excludeprecedence = bool
-    filter            = string
-  }))
-```
-
-Default: `{}`
-
-### command\_node\_step\_plugin
-
-Description: A node\_step\_plugin block for a command.
-
-Type:
-
-```hcl
-map(object({
-    type   = string
-    config = map(string)
-  }))
-```
-
-Default: `{}`
-
 ### command\_ordering\_strategy
 
 Description: The name of the strategy used to describe how to traverse the matrix of nodes and commands. The default is `node-first`, meaning that all commands will be executed on a single node before moving on to the next. May also be set to `step-first`, meaning that a single step will be executed across all nodes before moving on to the next step.
@@ -166,21 +93,6 @@ Description: The name of the strategy used to describe how to traverse the matri
 Type: `string`
 
 Default: `"node-first"`
-
-### command\_step\_plugin
-
-Description: A step block for a command.
-
-Type:
-
-```hcl
-map(object({
-    type   = string
-    config = map(string)
-  }))
-```
-
-Default: `{}`
 
 ### continue\_on\_error
 
@@ -238,53 +150,33 @@ Type: `string`
 
 Default: `null`
 
-### notification
+### notifications
 
 Description: Nested block defining notifications on the job workflow.
 
 Type:
 
 ```hcl
-map(object({
-    type         = string
-    webhook_urls = list(string)
+list(object({
+    type = string
+    webhook_urls = optional(list(string))
+
+    emails = optional(list(object({
+      attach_log = optional(bool)
+      recipients = list(string)
+      subject    = optional(string)
+    })))
+
+    plugins = optional(list(object({
+      type = string
+      config = map(any)
+    })))
   }))
 ```
 
-Default: `{}`
+Default: `[]`
 
-### notification\_email
-
-Description: Email block for a notification
-
-Type:
-
-```hcl
-map(object({
-    attach_log = bool
-    recipients = list(string)
-    subject    = string
-  }))
-```
-
-Default: `{}`
-
-### notification\_plugin
-
-Description: Plugin block for a notification
-
-Type:
-
-```hcl
-map(object({
-    type   = string
-    config = map(string)
-  }))
-```
-
-Default: `{}`
-
-### option
+### options
 
 Description: Nested block defining an option a user may set when executing this job. A job may have any number of options.
 
@@ -293,17 +185,17 @@ Type:
 ```hcl
 list(object({
     name                      = string
-    default_value             = string
-    value_choices             = list(string)
-    value_choices_url         = string
-    require_predefined_choice = bool
-    validation_regex          = string
-    description               = string
-    required                  = bool
-    allow_multiple_values     = bool
-    multi-value_delimiter     = string
-    obscure_input             = bool
-    exposed_to_scripts        = bool
+    default_value             = optional(string)
+    value_choices             = optional(list(string))
+    value_choices_url         = optional(string)
+    require_predefined_choice = optional(bool)
+    validation_regex          = optional(string)
+    description               = optional(string)
+    required                  = optional(bool)
+    allow_multiple_values     = optional(bool)
+    multi_value_delimiter     = optional(string)
+    obscure_input             = optional(bool)
+    exposed_to_scripts        = optional(bool)
   }))
 ```
 
@@ -360,10 +252,6 @@ Default: `false`
 ## Outputs
 
 The following outputs are exported:
-
-### local-commands
-
-Description: n/a
 
 ### rundeck\_job
 
