@@ -23,97 +23,17 @@ module "rd_job" {
   # node_filter_exclude_precedence = "" # Accepting the module's default
 
   # Module command blocks
-  command = {
-    command_one = {
-      description      = "Command block, index command_one"
-      shell_command    = "echo 'Command block, index command_one'"
-      inline_script    = null
-      script_file      = null
-      script_file_args = null
+  commands = [
+    {
+      description = "command block"
+      jobs = [
+        {
+          name = "job 1 in command block"
+        },
+        {
+          name = "job 2 in command block"
+        }
+      ]
     }
-    command_two = {
-      description      = "Command block, index command_two"
-      shell_command    = null
-      inline_script    = null
-      script_file      = null
-      script_file_args = null
-    }
-    command_three = {
-      description      = "Command block, index command_three"
-      shell_command    = null
-      inline_script    = null
-      script_file      = null
-      script_file_args = null
-    }
-    command_four = {
-      description      = "Command block, index command_four"
-      shell_command    = null
-      inline_script    = null
-      script_file      = null
-      script_file_args = null
-    }
-    command_five = {
-      description      = "Command block, index command_five"
-      shell_command    = null
-      inline_script    = null
-      script_file      = null
-      script_file_args = null
-    }
-  }
-
-  command_job = {
-    command_two = {
-      name              = "command_job-command_two"
-      group_name        = null
-      run_for_each_node = null
-      args              = null
-    }
-    command_three = {
-      name              = "command_job-command_three"
-      group_name        = null
-      run_for_each_node = null
-      args              = null
-    }
-  }
-
-  command_job_nodefilters = {
-    command_three = {
-      excludeprecedence = false
-      filter            = "*.*"
-    }
-  }
-
-  command_node_step_plugin = {
-    command_four = {
-      type   = "command_four - type"
-      config = {}
-    }
-  }
-
-  command_step_plugin = {
-    command_five = {
-      type   = "command_five - type"
-      config = {}
-    }
-  }
-  
-  # Module notification blocks
-  notification = {
-    notification_one = {
-      type = "on_success"
-      webhook_urls = ["http://localhost?index=notification_one"]
-    }
-    notification_two = {
-      type = "email"
-      webhook_urls = null
-    }
-  }
-
-  notification_email = {
-    notification_two = {
-      attach_log = true
-      recipients = ["root@localhost"]
-      subject = "Notification two, email"
-    }
-  }
+  ]
 }

@@ -128,98 +128,69 @@ variable "node_filter_exclude_precedence" {
   default     = false
 }
 
-variable "option" {
+variable "options" {
   type = list(object({
     name                      = string
-    default_value             = string
-    value_choices             = list(string)
-    value_choices_url         = string
-    require_predefined_choice = bool
-    validation_regex          = string
-    description               = string
-    required                  = bool
-    allow_multiple_values     = bool
-    multi-value_delimiter     = string
-    obscure_input             = bool
-    exposed_to_scripts        = bool
+    default_value             = optional(string)
+    value_choices             = optional(list(string))
+    value_choices_url         = optional(string)
+    require_predefined_choice = optional(bool)
+    validation_regex          = optional(string)
+    description               = optional(string)
+    required                  = optional(bool)
+    allow_multiple_values     = optional(bool)
+    multi_value_delimiter     = optional(string)
+    obscure_input             = optional(bool)
+    exposed_to_scripts        = optional(bool)
   }))
   description = "Nested block defining an option a user may set when executing this job. A job may have any number of options."
   default     = []
 }
 
-variable "command" {
-  type = map(object({
-    description      = string
-    shell_command    = string
-    inline_script    = string
-    script_file      = string
-    script_file_args = string
+variable "commands" {
+  type = list(object({
+    description      = optional(string)
+    shell_command    = optional(string)
+    inline_script    = optional(string)
+    script_file      = optional(string)
+    script_file_args = optional(string)
+
+    # job blocks (optional)
+    jobs = optional(list(object({
+      name              = string
+      group_name        = optional(string)
+      run_for_each_node = optional(bool)
+      args              = optional(string)
+      nodefilters       = optional(map(any))
+    })))
+
+    # node_step_plugin and step_plugin blocks (optional)
+    # plugin = (node_step_plugin || step_plugin)
+    steps = optional(list(object({
+      plugin = string
+      type   = string
+      config = optional(map(any))
+    })))
   }))
   description = "Nested block defining one step in the job workflow. A job must have one or more commands."
 }
 
-variable "command_job" {
-  type = map(object({
-    name              = string
-    group_name        = string
-    run_for_each_node = bool
-    args              = string
-  }))
-  description = "A job block for a command."
-  default     = {}
-}
-
-variable "command_job_nodefilters" {
-  type = map(object({
-    excludeprecedence = bool
-    filter            = string
-  }))
-  description = "A nodefilters block for a specific job block"
-  default     = {}
-}
-
-variable "command_node_step_plugin" {
-  type = map(object({
-    type   = string
-    config = map(string)
-  }))
-  description = "A node_step_plugin block for a command."
-  default     = {}
-}
-
-variable "command_step_plugin" {
-  type = map(object({
-    type   = string
-    config = map(string)
-  }))
-  description = "A step block for a command."
-  default     = {}
-}
-
-variable "notification" {
-  type = map(object({
+variable "notifications" {
+  type = list(object({
     type         = string
-    webhook_urls = list(string)
+    webhook_urls = optional(list(string))
+
+    emails = optional(list(object({
+      attach_log = optional(bool)
+      recipients = list(string)
+      subject    = optional(string)
+    })))
+
+    plugins = optional(list(object({
+      type   = string
+      config = map(any)
+    })))
   }))
   description = "Nested block defining notifications on the job workflow."
-  default     = {}
-}
-
-variable "notification_email" {
-  type = map(object({
-    attach_log = bool
-    recipients = list(string)
-    subject    = string
-  }))
-  description = "Email block for a notification"
-  default     = {}
-}
-
-variable "notification_plugin" {
-  type = map(object({
-    type   = string
-    config = map(string)
-  }))
-  description = "Plugin block for a notification"
-  default     = {}
+  default     = []
 }

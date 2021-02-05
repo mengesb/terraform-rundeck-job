@@ -3,47 +3,6 @@
 # Plan:: main.tf
 #
 
-locals {
-  commands = flatten([for k, v in var.command : {
-    description   = v.description
-    shell_command = v.shell_command
-    inline_script = v.inline_script
-    script_file   = v.inline_script
-    job = flatten([for l, w in var.command_job : {
-      name              = w.name
-      group_name        = w.group_name
-      run_for_each_node = w.run_for_each_node
-      args              = w.args
-      nodefilters       = lookup(var.command_job_nodefilters, l, null)
-    } if l == k])
-    node_step_plugin = flatten([for m, x in var.command_node_step_plugin : {
-      type   = x.type
-      config = x.config
-    } if m == k])
-    step_plugin = flatten([for n, y in var.command_step_plugin : {
-      type   = y.type
-      config = y.config
-    } if n == k])
-  }])
-  notifications = flatten([for k, v in var.notification : {
-    type         = v.type
-    webhook_urls = v.webhook_urls
-    email = flatten([for l, w in var.notification_email : {
-      attach_log = w.attach_log
-      recipients = w.recipients
-      subject    = w.subject
-    } if l == k])
-    plugin = flatten([for m, x in var.notification_plugin : {
-      type   = x.type
-      config = x.config
-    } if m == k])
-  }])
-}
-
-output "local-commands" {
-  value = local.commands
-}
-
 resource "rundeck_job" "job" {
   name                           = var.name
   description                    = var.description
@@ -65,7 +24,7 @@ resource "rundeck_job" "job" {
   node_filter_exclude_precedence = var.node_filter_exclude_precedence
 
   dynamic "option" {
-    for_each = var.option
+    for_each = var.options
 
     content {
       name                      = option.value.name
@@ -84,7 +43,7 @@ resource "rundeck_job" "job" {
   }
 
   dynamic "command" {
-    for_each = local.commands
+    for_each = var.commands
 
     content {
       description   = command.value.description
@@ -93,7 +52,7 @@ resource "rundeck_job" "job" {
       script_file   = command.value.inline_script
 
       dynamic "job" {
-        for_each = command.value.job
+        for_each = command.value.jobs
 
         content {
           name              = job.value.name
@@ -105,7 +64,7 @@ resource "rundeck_job" "job" {
       }
 
       dynamic "node_step_plugin" {
-        for_each = command.value.node_step_plugin
+        for_each = command.value.steps == null ? [] : [for j in command.value.steps : { type = j.type, config = j.config } if j.plugin == "node_step_plugin"]
 
         content {
           type   = node_step_plugin.value.type
@@ -114,7 +73,7 @@ resource "rundeck_job" "job" {
       }
 
       dynamic "step_plugin" {
-        for_each = command.value.step_plugin
+        for_each = command.value.steps == null ? [] : [for k in command.value.steps : { type = k.type, config = k.config } if k.plugin == "step_plugin"]
 
         content {
           type   = step_plugin.value.type
@@ -125,14 +84,14 @@ resource "rundeck_job" "job" {
   }
 
   dynamic "notification" {
-    for_each = local.notifications
+    for_each = var.notifications
 
     content {
       type         = notification.value.type
       webhook_urls = notification.value.webhook_urls
 
       dynamic "email" {
-        for_each = notification.value.email
+        for_each = notification.value.emails == null ? [] : [for e in notification.value.emails : { attach_log = e.attach_log, recipients = e.recipients, subject = e.subject }]
 
         content {
           attach_log = email.value.attach_log
@@ -140,8 +99,9 @@ resource "rundeck_job" "job" {
           subject    = email.value.subject
         }
       }
+
       dynamic "plugin" {
-        for_each = notification.value.plugin
+        for_each = notification.value.plugin == null ? [] : [for p in notification.value.plugins : { type = p.type, config = p.config }]
 
         content {
           type   = plugin.value.type
