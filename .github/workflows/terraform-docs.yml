@@ -16,6 +16,7 @@ jobs:
         tf_docs_output_file: README.md
         tf_docs_output_method: inject
         tf_docs_git_push: 'true'
-        tf_docs_args: '--config .terraform-docs.yml'
+        tf_docs_args: '--show-all --sort-by-required --escape'
+        tf_docs_indentation: '3'
         tf_docs_content_type: 'document'
-
+        tf_docs_git_commit_message: 'terraform-docs: autogenerate README.md'
