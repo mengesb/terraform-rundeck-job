@@ -6,6 +6,8 @@ Terraform rundeck job module.
 NOTE: Terraform experimental feature enabled: [module_variable_optional_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
 
 <!--- BEGIN_TF_DOCS --->
+Error: unknown shorthand flag: 'c' in -c
+
 <!--- END_TF_DOCS --->
 ## Contributing
 
