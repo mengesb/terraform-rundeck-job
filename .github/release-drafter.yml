@@ -26,8 +26,6 @@ autolabeler:
   - label: 'enhancement'
     branch:
       - '/feature\/.+/'
-    body:
-      - '/GH-[0-9]+/'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&#@`'
 version-resolver:
