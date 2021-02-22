@@ -16,6 +16,6 @@ jobs:
         tf_docs_output_file: README.md
         tf_docs_output_method: inject
         tf_docs_git_push: 'true'
-        tf_docs_args: '-c .terraform-docs.yml'
+        tf_docs_args: '--config .terraform-docs.yml'
         tf_docs_content_type: 'document'
 
