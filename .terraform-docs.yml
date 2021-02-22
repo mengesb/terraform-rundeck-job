@@ -1,5 +1,4 @@
 formatter: markdown document
-header-from: header.txt
 
 sections:
   hide-all: false
