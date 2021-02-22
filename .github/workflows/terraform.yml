@@ -1,9 +1,6 @@
 ---
-name: Verify and Bump
+name: Terraform Checks
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 jobs:
@@ -34,4 +31,3 @@ jobs:
           RUNDECK_API: 26
           RUNDECK_AUTH_TOKEN: abcdefghijklmnopqrstuvwxyz01234Z
           RUNDECK_URL: "https://localhost"
-
