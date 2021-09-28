@@ -59,7 +59,7 @@ resource "rundeck_job" "job" {
           group_name        = job.value.group_name
           run_for_each_node = job.value.run_for_each_node
           args              = job.value.args
-          nodefilters       = job.value.nodefilters
+          node_filters      = job.value.nodefilters
         }
       }
 
