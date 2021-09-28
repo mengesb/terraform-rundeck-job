@@ -59,7 +59,16 @@ resource "rundeck_job" "job" {
           group_name        = job.value.group_name
           run_for_each_node = job.value.run_for_each_node
           args              = job.value.args
-          node_filters      = job.value.nodefilters
+
+          dynamic "node_filters" {
+            for_each = job.value.node_filters
+            
+            content {
+              exclude_precedence = node_filters.value.exclude_precedence
+              filter             = node_filters.value.filter
+              exclude_filter     = node_filters.value.exclude_filter
+            }
+          }
         }
       }
 
