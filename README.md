@@ -10,7 +10,7 @@ NOTE: Terraform experimental feature enabled: [module_variable_optional_attrs](h
 
 The following requirements are needed by this module:
 
-- terraform (~> 0.14.0)
+- terraform (~> 1.0.0)
 
 - rundeck (~> 0.4.1-pre)
 
