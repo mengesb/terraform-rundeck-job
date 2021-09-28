@@ -1,22 +1,16 @@
-<!-- markdownlint-disable-file MD033 -->
+<!--- BEGIN_TF_DOCS --->
+<!-- markdownlint-disable-file MD033 MD012 -->
 # terraform-rundeck-job
 
 Terraform rundeck job module.
 
-NOTE: Terraform experimental feature enabled: [module_variable_optional_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
+NOTE: Terraform experimental feature enabled: [module\_variable\_optional\_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
 
-<!--- BEGIN_TF_DOCS --->
 ## Requirements
 
 The following requirements are needed by this module:
 
 - terraform (~> 1.0.0)
-
-- rundeck (= 0.4.1-pre)
-
-## Providers
-
-The following providers are used by this module:
 
 - rundeck (= 0.4.1-pre)
 
@@ -258,7 +252,6 @@ The following outputs are exported:
 
 Description: n/a
 
-<!--- END_TF_DOCS --->
 ## Contributing
 
 Contributions are always welcome. Please consult our [CONTRIBUTING.md](CONTRIBUTING.md) file for more information on how to submit quality contributions.
@@ -282,3 +275,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+<!--- END_TF_DOCS --->
