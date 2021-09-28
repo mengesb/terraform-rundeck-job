@@ -1,5 +1,6 @@
 formatter: markdown document
 header-from: header.txt
+footer-from: footer.txt
 
 sections:
   show:
