@@ -12,7 +12,7 @@ The following requirements are needed by this module:
 
 - terraform (~> 1.0.0)
 
-- rundeck (= 0.4.1-pre)
+- rundeck (~> 0.4.2)
 
 ## Required Inputs
 
