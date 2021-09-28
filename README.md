@@ -12,7 +12,7 @@ The following requirements are needed by this module:
 
 - terraform (~> 1.0.0)
 
-- rundeck (= 0.4.1-pre)
+- rundeck (~> 0.4.2)
 
 ## Required Inputs
 
@@ -38,7 +38,7 @@ list(object({
       group_name        = optional(string)
       run_for_each_node = optional(bool)
       args              = optional(string)
-      nodefilters       = optional(map(any))
+      node_filters      = optional(map(any))
     })))
 
     # node_step_plugin and step_plugin blocks (optional)

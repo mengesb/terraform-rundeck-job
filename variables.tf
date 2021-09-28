@@ -161,7 +161,7 @@ variable "commands" {
       group_name        = optional(string)
       run_for_each_node = optional(bool)
       args              = optional(string)
-      nodefilters       = optional(map(any))
+      node_filters      = optional(map(any))
     })))
 
     # node_step_plugin and step_plugin blocks (optional)
