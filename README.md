@@ -6,17 +6,18 @@ Terraform rundeck job module.
 NOTE: Terraform experimental feature enabled: [module_variable_optional_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
 
 <!--- BEGIN_TF_DOCS --->
+<!-- markdownlint-disable-file MD033 MD012 -->
+# terraform-rundeck-job
+
+Terraform rundeck job module.
+
+NOTE: Terraform experimental feature enabled: [module\_variable\_optional\_attrs](https://www.terraform.io/docs/language/expressions/type-constraints.html#experimental-optional-object-type-attributes)
+
 ## Requirements
 
 The following requirements are needed by this module:
 
 - terraform (~> 1.0.0)
-
-- rundeck (= 0.4.1-pre)
-
-## Providers
-
-The following providers are used by this module:
 
 - rundeck (= 0.4.1-pre)
 
