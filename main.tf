@@ -62,7 +62,7 @@ resource "rundeck_job" "job" {
 
           dynamic "node_filters" {
             for_each = job.value.node_filters
-            
+
             content {
               exclude_precedence = node_filters.value.exclude_precedence
               filter             = node_filters.value.filter
